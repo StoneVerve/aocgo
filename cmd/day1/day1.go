@@ -7,6 +7,9 @@ import (
 	"os"
 )
 
+/*
+ * A map with names of all decimal digits from 1 to 9 and their corresponding values
+ */
 var digits = map[string]int{
 	"one":   1,
 	"two":   2,
@@ -25,23 +28,44 @@ func main() {
 	fmt.Println(getSumCalibrations(text))
 }
 
+/*
+ * Given an ASCII text, finds sum of all the calibrations
+ */
 func getSumCalibrations(text []string) int {
 	sum := 0
 	for _, line := range text {
-		sum = sum + getCalibration(line)
+		calibration, err := getCalibration(line)
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			sum += calibration
+		}
 	}
 	return sum
 }
 
-func getCalibration(line string) int {
+/*
+ * Given an ASCII text line, finds the corresponding calibration
+ * Returns an error if there is no calibration value in the text line
+ */
+func getCalibration(line string) (int, error) {
 	leftDigit, errLeft := getLeftDigit([]byte(line))
-	rightDigit, errRight := getRightDigit([]byte(line))
-	if errLeft != nil || errRight != nil {
-		fmt.Println("There was en error with line")
+	if errLeft != nil {
+		return 0, fmt.Errorf("There is an error with line: \"%s\" \n"+
+			"Error: %w", line, errLeft)
 	}
-	return (leftDigit * 10) + rightDigit
+	rightDigit, errRight := getRightDigit([]byte(line))
+	if errRight != nil {
+		return 0, fmt.Errorf("There is an error with line: \"%s\" \n"+
+			"Error: %w", line, errRight)
+	}
+	return (leftDigit * 10) + rightDigit, nil
 }
 
+/*
+ * Given a text line in ASCII, finds the first decimal digit from left to right
+ * Returns an error if the line does not contain any decimal digits
+ */
 func getLeftDigit(line []byte) (int, error) {
 	number := 0
 	lineLength := len(line)
@@ -63,6 +87,10 @@ func getLeftDigit(line []byte) (int, error) {
 	return 0, errors.New("The line does no contain any digit")
 }
 
+/*
+ * Given a text line in ASCII, finds the first decimal digit from right to left
+ * Returns an error if the line does not contain any decimal digits
+ */
 func getRightDigit(line []byte) (int, error) {
 	number := 0
 	lineLength := len(line)
@@ -84,21 +112,9 @@ func getRightDigit(line []byte) (int, error) {
 	return 0, errors.New("The line does no contain any digit")
 }
 
-func isDigit(digit byte) bool {
-	if digit >= 48 && digit <= 57 {
-		return true
-	}
-	return false
-}
-
-func convertWord(digit []byte) (int, error) {
-	if !isWordDigit(digit) {
-		return 0, errors.New("The word is not a digit")
-	}
-	val, _ := digits[string(digit)]
-	return val, nil
-}
-
+/*
+ * Checks if a slice of bytes encodes the name of decimal digit (1-9) in ASCII
+ */
 func isWordDigit(digit []byte) bool {
 	word := string(digit)
 	_, ok := digits[word]
@@ -108,9 +124,35 @@ func isWordDigit(digit []byte) bool {
 	return false
 }
 
+/*
+ * Converts a slice of bytes (corresponding to name of a digit 1-9) from its ASCII encoding to the corresponding ASCCI digit
+ * Returns an error if the slice of bytes does not correspond to the name of a digit 1-9 in ASCII encoding
+ */
+func convertWord(digit []byte) (int, error) {
+	if !isWordDigit(digit) {
+		return 0, errors.New("The word is not the name of a single digit number")
+	}
+	val, _ := digits[string(digit)]
+	return val, nil
+}
+
+/*
+ * Checks if a byte encodes a digit in ASCII
+ */
+func isDigit(digit byte) bool {
+	if digit >= 48 && digit <= 57 {
+		return true
+	}
+	return false
+}
+
+/*
+ * Converts a byte from its ASCII encoding to the corresponding ASCCI digit
+ * Returns an error if the byte does not correspond to a digit 1-9 in ASCII encoding
+ */
 func convertByte(digit byte) (int, error) {
 	if isDigit(digit) {
 		return int(digit - 48), nil
 	}
-	return 0, errors.New("Not a number")
+	return 0, errors.New("The byte is not a single digit number in ASCII")
 }
