@@ -84,7 +84,7 @@ func getLeftDigit(line []byte) (int, error) {
 			return number, nil
 		}
 	}
-	return 0, errors.New("The line does no contain any digit")
+	return 0, errors.New("the line does no contain any digit")
 }
 
 /*
@@ -109,7 +109,7 @@ func getRightDigit(line []byte) (int, error) {
 			return number, nil
 		}
 	}
-	return 0, errors.New("The line does no contain any digit")
+	return 0, errors.New("the line does no contain any digit")
 }
 
 /*
@@ -125,12 +125,12 @@ func isWordDigit(digit []byte) bool {
 }
 
 /*
- * Converts a slice of bytes (corresponding to name of a digit 1-9) from its ASCII encoding to the corresponding ASCCI digit
+ * Converts a slice of bytes (corresponding to name of a digit 1-9) from its ASCII encoding to the corresponding ASCII digit
  * Returns an error if the slice of bytes does not correspond to the name of a digit 1-9 in ASCII encoding
  */
 func convertWord(digit []byte) (int, error) {
 	if !isWordDigit(digit) {
-		return 0, errors.New("The word is not the name of a single digit number")
+		return 0, errors.New("the word is not the name of a single digit number")
 	}
 	val, _ := digits[string(digit)]
 	return val, nil
@@ -147,12 +147,12 @@ func isDigit(digit byte) bool {
 }
 
 /*
- * Converts a byte from its ASCII encoding to the corresponding ASCCI digit
+ * Converts a byte from its ASCII encoding to the corresponding ASCII digit
  * Returns an error if the byte does not correspond to a digit 1-9 in ASCII encoding
  */
 func convertByte(digit byte) (int, error) {
 	if isDigit(digit) {
 		return int(digit - 48), nil
 	}
-	return 0, errors.New("The byte is not a single digit number in ASCII")
+	return 0, errors.New("the byte is not a single digit number in ascii")
 }
